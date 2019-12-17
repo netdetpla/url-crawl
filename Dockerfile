@@ -1,6 +1,6 @@
 FROM node:stretch
 
-#ADD ["sources.list", "/etc/apt/"]
+ADD ["sources.list", "/etc/apt/"]
 
 ADD ["./", "/"]
 

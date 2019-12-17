@@ -48,15 +48,6 @@ async function execute(urls: Url[]): Promise<string[]> {
         for (let i = 0; i < urls.length; i++) {
             let page = await browser.newPage();
 
-            await page.setRequestInterception(true);
-            let imageRegex = ".*(.png|.jpg|.jpeg|.webp|.gif|.ico)$";
-            page.on('request', interceptedRequest => {
-                if (interceptedRequest.url().match(imageRegex))
-                    interceptedRequest.abort();
-                else
-                    interceptedRequest.continue();
-            });
-
             await page.goto(urls[i].url, {timeout: 10 * 1000});
             await page.waitFor(1000);
             const result = await page.evaluate(() => {
