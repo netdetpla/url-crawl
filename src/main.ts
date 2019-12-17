@@ -104,7 +104,7 @@ function errorEnd(message: string, code: number) {
 }
 
 init();
-Log.info("page-crawl start");
+Log.info("url-crawl start");
 // 获取配置
 let urls = parseParam();
 // 执行
