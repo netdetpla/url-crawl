@@ -7,8 +7,9 @@ ADD ["./", "/"]
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 
 RUN apt update \
-&& apt install -y chromium \
-&& cd / \
+&& apt install -y chromium
+
+RUN cd / \
 && npm i \
 && npm run compile
 
