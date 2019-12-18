@@ -44,28 +44,33 @@ async function execute(urls: Url[]): Promise<string[]> {
     });
     try {
         let domains = [];
-
+        let page = await browser.newPage();
         for (let i = 0; i < urls.length; i++) {
-            let page = await browser.newPage();
-
-            await page.goto(urls[i].url, {timeout: 10 * 1000});
-            await page.waitFor(1000);
-            const result = await page.evaluate(() => {
-                let urlSet = [];
-                let elements = document.querySelectorAll("a[href]");
-                for (let i = 0; i < elements.length; i++) {
-                    urlSet.push(elements[i].getAttribute("href"));
-                }
-                return urlSet;
-            });
-            await page.close();
-            let regex = "^http.*";
-            for (let i = 0; i < result.length; i++) {
-                if (result[i].match(regex)) {
-                    domains.push(url2Domain(result[i]));
+            let connected = true;
+            await page.goto(urls[i].url, {timeout: 10 * 1000})
+                .catch(reason => {
+                    Log.warn(reason);
+                    connected = false;
+                });
+            if (connected) {
+                await page.waitFor(1000);
+                const result = await page.evaluate(() => {
+                    let urlSet = [];
+                    let elements = document.querySelectorAll("a[href]");
+                    for (let i = 0; i < elements.length; i++) {
+                        urlSet.push(elements[i].getAttribute("href"));
+                    }
+                    return urlSet;
+                });
+                let regex = "^http.*";
+                for (let i = 0; i < result.length; i++) {
+                    if (result[i].match(regex)) {
+                        domains.push(url2Domain(result[i]));
+                    }
                 }
             }
         }
+        await page.close();
         return [...new Set(domains)];
     } catch (e) {
         Log.error(e.stack);
